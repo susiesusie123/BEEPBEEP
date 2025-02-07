@@ -1,0 +1,37 @@
+import 'dart:io';
+
+void main() async {
+  print("🚀 Starting macOS build process...");
+
+  // Enable macOS support
+  await runCommand("flutter", ["config", "--enable-macos-desktop"]);
+
+  // Set project directory
+  String projectDir = Directory.current.path;
+  String appName = "alexID"; // Your app name
+
+  print("📦 Building macOS app...");
+  await runCommand("flutter", ["build", "macos"]);
+
+  // Define output paths
+  String outputDir = "$projectDir/release_app";
+  Directory(outputDir).createSync(recursive: true);
+
+  // Path to built .app file
+  String builtAppPath = "$projectDir/build/macos/Build/Products/Release/$appName.app";
+
+  // Move .app file to release folder
+  if (Directory(builtAppPath).existsSync()) {
+    String destination = "$outputDir/$appName.app";
+    await runCommand("mv", [builtAppPath, destination]);
+    print("✅ Build successful! Your .app file is located in: $destination");
+  } else {
+    print("❌ Build failed. Check errors above.");
+  }
+}
+
+// Function to execute shell commands
+Future<void> runCommand(String command, List<String> args) async {
+  final process = await Process.start(command, args, mode: ProcessStartMode.inheritStdio);
+  await process.exitCode;
+}
