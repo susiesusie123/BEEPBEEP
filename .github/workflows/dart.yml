@@ -15,7 +15,7 @@ void main() async {
 
   // Define output paths
   String outputDir = "$projectDir/release_app";
-  Directory(outputDir).createSync(recursive:true);
+  Directory(outputDir).createSync(recursive: true);
 
   // Path to built .app file
   String builtAppPath = "$projectDir/build/macos/Build/Products/Release/$appName.app";
@@ -24,11 +24,23 @@ void main() async {
   if (Directory(builtAppPath).existsSync()) {
     String destination = "$outputDir/$appName.app";
     await runCommand("mv", [builtAppPath, destination]);
+    print("✅ Build successful! Your .app file is located in: $destination");
+  } else {
+    print("❌ Build failed. Check errors above.");
   }
 }
 
 // Function to execute shell commands
 Future<void> runCommand(String command, List<String> args) async {
-  final process = await Process.start(command, args, mode: ProcessStartMode.inheritStdio);
-  await process.exitCode;
+  try {
+    final result = await Process.run(command, args, runInShell: true);
+    if (result.exitCode != 0) {
+      print("❌ Command failed with exit code ${result.exitCode}");
+      print(result.stderr);
+    } else {
+      print(result.stdout);
+    }
+  } catch (e) {
+    print("❌ Error running command: $e");
+  }
 }
