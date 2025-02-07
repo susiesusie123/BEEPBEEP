@@ -40,7 +40,7 @@ jobs:
           cd $GITHUB_WORKSPACE/app_output && zip -r Runner.app.zip Runner.app
           
       - name: Upload the .app file to GitHub
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ios-app
           path: app_output/Runner.app.zip
