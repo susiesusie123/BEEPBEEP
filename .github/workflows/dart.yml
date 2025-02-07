@@ -24,9 +24,6 @@ void main() async {
   if (Directory(builtAppPath).existsSync()) {
     String destination = "$outputDir/$appName.app";
     await runCommand("mv", [builtAppPath, destination]);
-    print("✅ Build successful! Your .app file is located in: $destination");
-  } else {
-    print("❌ Build failed. Check errors above.");
   }
 }
 
